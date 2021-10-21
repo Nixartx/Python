@@ -8,14 +8,23 @@ def rev(string):
         for i in range(len(word)):
             if not word[i].isalpha():
                 symbol[i] = word[i]
-                letters = word[:i] + word[(i + 1):]
+            else:
+                letters.append(word[i])
         reversed_word = letters[::-1]
         for key, value in symbol.items():
+            reversed_word = "".join(reversed_word)
             reversed_word = reversed_word[:key] + value + reversed_word[key:]
-        reversed_words.append(reversed_word)
-    return ' '.join(reversed_words)
+        reversed_words.append("".join(reversed_word))
+    return " ".join(reversed_words)
 
 
 if __name__ == '__main__':
+    cases = [
 
-    print(rev("a1bcd efg!h"))
+        ("abcd efgh", "dcba hgfe"),
+        ("a1bcd efg!h", "d1cba hgf!e"),
+        ("", ""),
+
+    ]
+    for text, reversed_text in cases:
+        assert rev(text) == reversed_text
