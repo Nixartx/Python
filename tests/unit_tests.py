@@ -2,7 +2,7 @@ import unittest
 import anagrams
 
 
-class anagramsTest(unittest.TestCase):
+class AnagramsTest(unittest.TestCase):
     __cases = [
         ("abcd efgh", "dcba hgfe"),
         ("a1bcd efg!h", "d1cba hgf!e"),
@@ -11,6 +11,6 @@ class anagramsTest(unittest.TestCase):
     ]
 
     def test_rev(self):
-        for text, reversed_text in self.__cases:
-            self.assertEqual(anagrams.rev(text), reversed_text)
-
+        for case in self.__cases:
+            with self.subTest(case=case):
+                self.assertEqual(anagrams.rev(case[0]), case[1])
