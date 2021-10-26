@@ -11,6 +11,6 @@ class AnagramsTest(unittest.TestCase):
     ]
 
     def test_rev(self):
-        for case in self.__cases:
-            with self.subTest(case=case):
-                self.assertEqual(anagrams.rev(case[0]), case[1])
+        for text, reversed_text in self.__cases:
+            with self.subTest(msg="Checking if text is reverted reversed_text", text=text,reversed_text=reversed_text):
+                self.assertEqual(anagrams.rev(text), reversed_text)
