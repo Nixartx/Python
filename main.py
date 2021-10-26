@@ -13,6 +13,7 @@ def rev(string):
         reversed_word = letters[::-1]
         for key, value in symbol.items():
             reversed_word.insert(key, value)
+        reversed_words.append(''.join(reversed_word))
     return " ".join(reversed_words)
 
 
