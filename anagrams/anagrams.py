@@ -1,5 +1,5 @@
 
-def rev(string):
+def string_reverse(string):
     words = string.split()
     reversed_words = []
     for word in words:

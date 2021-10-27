@@ -10,7 +10,10 @@ class AnagramsTest(unittest.TestCase):
         ("", ""),
     ]
 
-    def test_rev(self):
+    def test_string_reverse_success(self):
         for text, reversed_text in self.__cases:
             with self.subTest(msg="Checking if reversed_text is reverted text", text=text, reversed_text=reversed_text):
-                self.assertEqual(anagrams.rev(text), reversed_text)
+                self.assertEqual(anagrams.string_reverse(text), reversed_text)
+
+    def test_string_reverse_numbers(self):
+        self.assertEqual(anagrams.string_reverse('123456789'), '123456789')

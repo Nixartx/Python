@@ -1,2 +1,2 @@
 # __init__.py
-from .anagrams import rev
+from .anagrams import string_reverse
