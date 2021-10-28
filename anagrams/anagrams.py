@@ -1,10 +1,13 @@
 
 def string_reverse(string):
-    words = string.split()
+    try:
+        words = string.split()
+    except AttributeError:
+        raise AttributeError("Parameter must be a string!")
     reversed_words = []
     for word in words:
-        reversed_word=[]
-        letters=[]
+        reversed_word = []
+        letters = []
         for char in word:
             if char.isalpha():
                 letters.append(char)
@@ -14,4 +17,5 @@ def string_reverse(string):
             else:
                 reversed_word.append(char)
         reversed_words.append(''.join(reversed_word))
+
     return " ".join(reversed_words)
