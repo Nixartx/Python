@@ -16,6 +16,5 @@ class AnagramsTest(unittest.TestCase):
                 self.assertEqual(anagrams.string_reverse(text), reversed_text)
 
     def test_string_reverse_exception(self):
-        with self.assertRaises(AttributeError) as e:
+        with self.assertRaises(AttributeError):
             anagrams.string_reverse(12345)
-        self.assertEqual("Parameter must be a string!", e.exception.args[0])

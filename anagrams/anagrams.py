@@ -1,9 +1,6 @@
 
 def string_reverse(string):
-    try:
-        words = string.split()
-    except AttributeError:
-        raise AttributeError("Parameter must be a string!")
+    words = string.split()
     reversed_words = []
     for word in words:
         reversed_word = []
