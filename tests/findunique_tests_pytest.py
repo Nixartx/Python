@@ -9,11 +9,10 @@ cases = [
     ("", 0),
 ]
 
-
-def test_findunique_success():
+@pytest.mark.parametrize("text,expected", cases)
+def test_findunique_success(text,expected):
     c = CountUnique()
-    for text, count_unique_symbols in cases:
-        assert c.count(text) == count_unique_symbols
+    assert c.count(text) == expected
 
 
 def test_findunique_cache():
