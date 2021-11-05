@@ -18,7 +18,7 @@ def test_CLCountUniqueCase_file(capfd):
         assert actual == expected
 
 
-def test_CLCountUniqueCase_String_and_File(capfd):
+def test_CLCountUniqueCase_string_and_file(capfd):
     expected = "Строка: 1. Уникальных символов: 3\n"
     with patch('builtins.open', mock_open(read_data='asasdasd asdasd kjm')):
         CLCountUnique().run(['--file', 'path_to_file', '--string', 'abcd'])
@@ -29,5 +29,10 @@ def test_CLCountUniqueCase_String_and_File(capfd):
 def test_CLCountUniqueCase_file_exception():
     c = CLCountUnique()
     with pytest.raises(FileNotFoundError):
-        c.run(['--file', 'abc'])
-        c.readfile()
+        c.readfile('abc')
+
+# def test_CLCountUniqueCase_file_exception2():
+#
+#     with pytest.raises(FileNotFoundError) as Error:
+#         CLCountUnique().readfile('abc')
+#     assert "Error: File does not appear to exist."==Error.value.args[1]
