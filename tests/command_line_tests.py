@@ -25,7 +25,9 @@ def test_CLCountUniqueCase_String_and_File(capfd):
         actual, err = capfd.readouterr()
         assert actual == expected
 
+
 def test_CLCountUniqueCase_file_exception():
-    #expected = "Error: File does not appear to exist."
+    c = CLCountUnique()
     with pytest.raises(FileNotFoundError):
-        CLCountUnique().run(['--file', 'abc'])
+        c.run(['--file', 'abc'])
+        c.readfile()

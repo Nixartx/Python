@@ -12,11 +12,9 @@ class CLCountUnique(CountUnique):
         self.parser.add_argument("--file", type=str, help="Path to file")
 
     def readfile(self):
-
-            with open(self._args.file) as f:
-                lines = f.readlines()
-            return lines
-
+        with open(self._args.file) as f:
+            lines = f.readlines()
+        return lines
 
     def run(self, args=None):
         try:
