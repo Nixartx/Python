@@ -11,7 +11,7 @@ class CLCountUnique(CountUnique):
         self.__parser.add_argument("--string", type=str)
         self.__parser.add_argument("--file", type=str, help="Path to file")
 
-    def __readfile(self):
+    def readfile(self):
         f = open(self.__args.file)
         lines = f.readlines()
         f.close()
@@ -24,7 +24,7 @@ class CLCountUnique(CountUnique):
             self.__args = self.__parser.parse_args()
 
         if self.__args.file:
-            for key, line in enumerate(self.__readfile()):
+            for key, line in enumerate(self.readfile()):
                 print(
                     "Строка: {0}. Уникальных символов: {1}".format(
                         key + 1, self.count(line)))
@@ -33,6 +33,3 @@ class CLCountUnique(CountUnique):
                 "Уникальных символов: {0}".format(
                     self.count(
                         self.__args.string)))
-
-# if __name__ == '__main__':
-#     CLCountUnique().run(["--file", "../FilesForTests/text.txt"])
