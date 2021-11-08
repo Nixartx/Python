@@ -9,8 +9,9 @@ cases = [
     ("", 0),
 ]
 
+
 @pytest.mark.parametrize("text,expected", cases)
-def test_findunique_success(text,expected):
+def test_findunique_success(text, expected):
     c = CountUnique()
     assert c.count(text) == expected
 
