@@ -2,8 +2,32 @@ import argparse
 from ReportMonaco import ReportMonaco
 
 class CLReportMonaco(ReportMonaco):
+    '''
+    Сlass extends CountUnique for working with the command line.
+
+    Example of usage:
+
+        CLCountUnique().run(['--files', 'reports'])
+
+        CLCountUnique().run(['--files', 'reports', '--desc'])
+
+        CLCountUnique().run(['--files', 'reports', 'driver', 'Daniel Ricciardo'])
+    '''
+
     parser = 0
     def __init__(self):
+        '''
+        init argparse groups and variables
+
+        group:
+        keys: --asc,---desc are flags True/False for variable reverse with default value False
+
+        --files - path to folder with reports
+
+        Subparser "driver" with param drivername
+
+        For work with parser and subparser uses default variable "driver_case"
+        '''
 
         self.parser = argparse.ArgumentParser()
 
@@ -24,6 +48,19 @@ class CLReportMonaco(ReportMonaco):
         super().__init__()
 
     def run(self, args_custom=None):
+        '''
+        The entry point for working with the class.
+        Depending on the driver_case variable, one of the scenarios works
+
+        Usage example:
+
+        CLReportMonaco().run()
+
+        CLReportMonaco().run(['--files', 'reports', 'driver', 'Daniel Ricciardo'])
+
+        :param args_custom: command line args
+        :return: False
+        '''
         args = self.parser.parse_args(args_custom)
         if args.driver_case:
             self.print_report(folder=args.files,driver_name=args.drivername)

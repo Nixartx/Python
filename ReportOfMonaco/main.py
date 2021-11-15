@@ -3,6 +3,7 @@ from CLReportMonaco import CLReportMonaco
 
 if __name__=="__main__":
     #R=CLReportMonaco()
+    CLReportMonaco().run()
     #R.run()
     #R.run(['--files', 'reports', '--desc'])
     #R.run(['--files', 'reports', 'driver', 'Daniel Ricciardo'])

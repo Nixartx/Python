@@ -2,13 +2,22 @@ import datetime
 
 
 class ReportMonaco:
+    '''
+    Class for working with the report of the Monaco 2018 Racing. To work, you need three report files:
+    start.log, end.log, abbreviations.txt
+    Example of using:
+    ReportMonaco().print_report(folder='reports')
+    or
+    ReportMonaco().print_report(folder='reports', driver_name="Daniel Ricciardo")
+    '''
 
     def __init__(self):
+        '''Init dict data attribute with data from files and dict report with processed data'''
         self.data = dict.fromkeys(["start", "finish", "abbreviations"])
         self.report = {}
 
     def readfile(self, folder):
-
+        '''Makes the file path from the user's folder param and reads the files into self.data'''
         files = {
             "start": "start.log",
             "finish": "end.log",
@@ -20,6 +29,12 @@ class ReportMonaco:
         return self.data
 
     def build_report(self, folder='.'):
+        '''
+        Makes a dictionary with a key that is an abbreviation of the driver and value is dictionary with all
+        information about the driver collected from the report files
+        :param folder: path to folder with files
+        :return: self
+        '''
         self.readfile(folder)
         racers = {}
         for row in self.data["start"]:
@@ -46,6 +61,11 @@ class ReportMonaco:
         return self
 
     def print_driver_info(self, driver):
+        '''
+        Prints row with driver info
+        :param driver: is a dict with info about driver. Keys: fullname, car, time
+        :return:
+        '''
         if driver:
             print(
                 "{:<20} | {:<25} | {:<10}".format(
@@ -56,12 +76,22 @@ class ReportMonaco:
             print("No results")
 
     def find_by_name(self, name):
+        '''
+        Looking for a driver by name
+        :param name: string name
+        :return: False if not found and dict driver if succes
+        '''
         for driver in self.report.values():
             if driver["fullname"].upper() == name.upper():
                 return driver
         return False
 
     def list_all(self, reverse=False):
+        '''
+        Prints report for all drivers from self.report dict
+        :param reverse: ASC or DESC sort report
+        :return: None
+        '''
         sorted_report = sorted(
             self.report,
             key=lambda racer: int(
@@ -76,6 +106,13 @@ class ReportMonaco:
             self.print_driver_info(self.report[driver])
 
     def print_report(self, folder=None, driver_name='', reverse=False):
+        '''
+        The entry point for working with the class. Depending on the parameters, it works with the racer report.
+        :param folder: string path to folder with reports
+        :param driver_name: Driver name for printing report by this racer
+        :param reverse: ASC or DESC sorting report
+        :return: None
+        '''
         if not folder:
             folder = '.'
         self.build_report(folder)
@@ -86,6 +123,7 @@ class ReportMonaco:
 
 
 if __name__ == "__main__":
-    ReportMonaco().print_report(folder='reports', driver_name="Daniel Ricciardo")
+    #ReportMonaco().print_report(folder='reports', driver_name="Daniel Ricciardo")
+    ReportMonaco().print_report(folder='reports')
     # rep.print_report(False)
     # rep.print_report("Daniel Ricciardo")
