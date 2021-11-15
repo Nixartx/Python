@@ -1,6 +1,7 @@
 import pytest
 from findunique import CountUnique
 
+
 cases = [
     ("asasdasd asdasd kjm", 3),
     ("asasdasd asdasd", 1),

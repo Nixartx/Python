@@ -1,3 +1,3 @@
 # __init__.py
-from findunique.findunique import CountUnique
-from findunique.collect_framework import CLCountUnique
+from .src.CountUnique import CountUnique
+from .src.CLCountUnique import CLCountUnique
