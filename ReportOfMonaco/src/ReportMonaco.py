@@ -35,7 +35,11 @@ class ReportMonaco:
         :param folder: path to folder with files
         :return: self
         '''
+        # try:
         self.readfile(folder)
+        # except FileNotFoundError:
+        #     print("Error: File does not appear to exist.")
+        #     exit()
         racers = {}
         for row in self.data["start"]:
             if row:
@@ -123,7 +127,9 @@ class ReportMonaco:
 
 
 if __name__ == "__main__":
-    #ReportMonaco().print_report(folder='reports', driver_name="Daniel Ricciardo")
-    ReportMonaco().print_report(folder='reports')
+    ReportMonaco().print_report(
+        folder='../tests/reports',
+        driver_name="Daniel Ricciardo")
+    # ReportMonaco().print_report(folder='sdsd')
     # rep.print_report(False)
     # rep.print_report("Daniel Ricciardo")
