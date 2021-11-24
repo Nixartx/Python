@@ -1,4 +1,5 @@
 import datetime
+from pathlib import Path
 
 
 class ReportMonaco:
@@ -16,7 +17,7 @@ class ReportMonaco:
         self.data = dict.fromkeys(["start", "finish", "abbreviations"])
         self.report = {}
 
-    def readfile(self, folder):
+    def read_file(self, folder):
         '''Makes the file path from the user's folder param and reads the files into self.data'''
         files = {
             "start": "start.log",
@@ -24,7 +25,8 @@ class ReportMonaco:
             "abbreviations": "abbreviations.txt",
         }
         for key, value in files.items():
-            with open(folder + "/" + value) as f:
+            path = Path(folder) / value
+            with open(path) as f:
                 self.data[key] = [line.strip() for line in f.readlines()]
         return self.data
 
@@ -36,7 +38,7 @@ class ReportMonaco:
         :return: self
         '''
         # try:
-        self.readfile(folder)
+        self.read_file(folder)
         # except FileNotFoundError:
         #     print("Error: File does not appear to exist.")
         #     exit()
@@ -62,7 +64,6 @@ class ReportMonaco:
             racer.update({"time": racer["time_f"] - racer["time_s"]})
 
         self.report = racers
-        return self
 
     def print_driver_info(self, driver):
         '''
@@ -107,7 +108,7 @@ class ReportMonaco:
             if i == sep:
                 print("{:_^66}".format(""))
             print("{:2d}. ".format(i), end='')
-            self.print_driver_info(self.report[driver])
+            self.print_driver_info(self.report.get(driver))
 
     def print_report(self, folder=None, driver_name='', reverse=False):
         '''
@@ -124,12 +125,3 @@ class ReportMonaco:
             self.print_driver_info(self.find_by_name(driver_name))
         else:
             self.list_all(reverse)
-
-
-if __name__ == "__main__":
-    ReportMonaco().print_report(
-        folder='../tests/reports',
-        driver_name="Daniel Ricciardo")
-    # ReportMonaco().print_report(folder='sdsd')
-    # rep.print_report(False)
-    # rep.print_report("Daniel Ricciardo")
