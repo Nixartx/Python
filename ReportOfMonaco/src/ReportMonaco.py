@@ -80,27 +80,38 @@ class ReportMonaco:
         else:
             print("No results")
 
-    def find_by_name(self, name):
+    def find_ny_name_filter(self, drivername, shortname):
         '''
-        Looking for a driver by name
-        :param name: string name
-        :return: False if not found and dict driver if succes
+        Filter function that looking for a driver by name. If drivername doesn't pass, return True to all
+        :param drivername: string that user entered
+        :param shortname: short code of driver and key in self.report dict, that pass from filter() called
+        :return: True if it find driver or driver doesn't pass. False in other cases
         '''
-        for driver in self.report.values():
-            if driver["fullname"].upper() == name.upper():
-                return driver
+        if not drivername or self.report[shortname]["fullname"].upper(
+        ) == drivername.upper():
+            return True
         return False
 
-    def list_all(self, reverse=False):
+    def list_all(self, drivers_to_print, reverse=False):
         '''
+        Generate dict report from self.report with drivers witch need to be printed
         Prints report for all drivers from self.report dict
         :param reverse: ASC or DESC sort report
+        :param drivers_to_print list of drivers witch need to be printed
         :return: None
         '''
+
+        report = dict((driver, self.report[driver])
+                      for driver in drivers_to_print)
+
+        if not report:
+            print("No results")
+            return
+
         sorted_report = sorted(
-            self.report,
+            report,
             key=lambda racer: int(
-                self.report[racer]["time"].total_seconds() *
+                report[racer]["time"].total_seconds() *
                 1000),
             reverse=reverse)
         sep = 16 if not reverse else len(sorted_report) - 14
@@ -108,7 +119,7 @@ class ReportMonaco:
             if i == sep:
                 print("{:_^66}".format(""))
             print("{:2d}. ".format(i), end='')
-            self.print_driver_info(self.report.get(driver))
+            self.print_driver_info(report.get(driver))
 
     def print_report(self, folder=None, driver_name='', reverse=False):
         '''
@@ -121,7 +132,11 @@ class ReportMonaco:
         if not folder:
             folder = '.'
         self.build_report(folder)
-        if driver_name:
-            self.print_driver_info(self.find_by_name(driver_name))
-        else:
-            self.list_all(reverse)
+        drivers_to_print = list(
+            filter(
+                lambda x: self.find_ny_name_filter(
+                    drivername=driver_name,
+                    shortname=x),
+                self.report))
+
+        self.list_all(drivers_to_print, reverse=reverse)
