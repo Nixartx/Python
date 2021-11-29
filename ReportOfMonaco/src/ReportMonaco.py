@@ -64,6 +64,7 @@ class ReportMonaco:
             racer.update({"time": racer["time_f"] - racer["time_s"]})
 
         self.report = racers
+        return self
 
     def print_driver_info(self, driver):
         '''
