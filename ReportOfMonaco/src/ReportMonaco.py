@@ -25,7 +25,7 @@ class ReportMonaco:
             "abbreviations": "abbreviations.txt",
         }
         for key, value in files.items():
-            path = Path(folder) / value
+            path = Path.cwd() / folder / value
             with open(path) as f:
                 self.data[key] = [line.strip() for line in f.readlines()]
         return self.data
@@ -79,6 +79,7 @@ class ReportMonaco:
                         :-3]))
         else:
             print("No results")
+        return driver
 
     def find_ny_name_filter(self, drivername, shortname):
         '''
@@ -108,6 +109,7 @@ class ReportMonaco:
             print("No results")
             return
 
+        output={}
         sorted_report = sorted(
             report,
             key=lambda racer: int(
@@ -119,7 +121,9 @@ class ReportMonaco:
             if i == sep:
                 print("{:_^66}".format(""))
             print("{:2d}. ".format(i), end='')
-            self.print_driver_info(report.get(driver))
+            output[driver]=(self.print_driver_info(report.get(driver)))
+            output[driver].update({'pos':i})
+        return output
 
     def print_report(self, folder=None, driver_name='', reverse=False):
         '''
@@ -139,4 +143,5 @@ class ReportMonaco:
                     shortname=x),
                 self.report))
 
-        self.list_all(drivers_to_print, reverse=reverse)
+        out=self.list_all(drivers_to_print, reverse=reverse)
+        return out
