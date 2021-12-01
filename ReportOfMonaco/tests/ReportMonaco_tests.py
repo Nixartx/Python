@@ -8,18 +8,27 @@ cases = [
     ({
         "folder": "../tests/reports",
         "driver_name": '',
-        "reverse": False
+        "reverse": False,
+        "driver_id": "",
     }, out),
     ({
         "folder": "../tests/reports",
         "reverse": True,
         "driver_name": '',
+        "driver_id": "",
     }, out2),
     ({
         "folder": "../tests/reports",
         "driver_name": "Daniel Ricciardo",
+        "driver_id": "",
         "reverse": False
     }, out3),
+    ({
+         "folder": "../tests/reports",
+         "driver_id": "DRR",
+         "driver_name":'',
+         "reverse": False
+     }, out3),
 ]
 
 
@@ -28,6 +37,7 @@ def test_ReportMonaco_success(capfd, params, expected):
     ReportMonaco().print_report(
         folder=params['folder'],
         driver_name=params['driver_name'],
+        driver_id=params['driver_id'],
         reverse=params['reverse'])
     actual, err = capfd.readouterr()
     assert actual == expected
@@ -43,5 +53,11 @@ def test_ReportMonaco_no_results(capfd):
     ReportMonaco().print_report(
         folder='../tests/reports',
         driver_name='Wrong Name')
+    actual, err = capfd.readouterr()
+    assert actual == expected
+
+    ReportMonaco().print_report(
+        folder='../tests/reports',
+        driver_id='Wrong Name')
     actual, err = capfd.readouterr()
     assert actual == expected

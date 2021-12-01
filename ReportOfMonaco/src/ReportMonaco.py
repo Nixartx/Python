@@ -77,12 +77,12 @@ class ReportMonaco:
                 "{:<20} | {:<25} | {:<10}".format(
                     driver["fullname"], driver["car"], str(
                         driver["time"])[
-                        :-3]))
+                                                       :-3]))
         else:
             print("No results")
         return driver
 
-    def find_ny_name_filter(self, drivername, shortname):
+    def find_by_name_filter(self, drivername, shortname):
         '''
         Filter function that looking for a driver by name. If drivername doesn't pass, return True to all
         :param drivername: string that user entered
@@ -93,6 +93,38 @@ class ReportMonaco:
         ) == drivername.upper():
             return True
         return False
+
+    def make_report(self, drivers_to_print, reverse=False):
+        report = dict((driver, self.report[driver])
+                      for driver in drivers_to_print)
+        if not report:
+            return False
+
+        sorted_report = sorted(
+            report,
+            key=lambda racer: int(
+                report[racer]["time"].total_seconds() *
+                1000),
+            reverse=reverse)
+
+        output = {}
+        for i, driver in enumerate(sorted_report, 1):
+            output[driver] = report.get(driver)
+            output[driver].update({'pos': i})
+        return output
+
+    def print_r(self, data, reverse=False):
+
+        if not data:
+            print("No results")
+            return
+
+        sep = 16 if not reverse else len(data) - 14
+        for driver in data:
+            if data[driver]['pos'] == sep:
+                print("{:_^66}".format(""))
+            print("{:2d}. ".format(data[driver]['pos']), end='')
+            self.print_driver_info(data.get(driver))
 
     def list_all(self, drivers_to_print, reverse=False):
         '''
@@ -110,7 +142,7 @@ class ReportMonaco:
             print("No results")
             return
 
-        output={}
+        output = {}
         sorted_report = sorted(
             report,
             key=lambda racer: int(
@@ -122,27 +154,45 @@ class ReportMonaco:
             if i == sep:
                 print("{:_^66}".format(""))
             print("{:2d}. ".format(i), end='')
-            output[driver]=(self.print_driver_info(report.get(driver)))
-            output[driver].update({'pos':i})
+            output[driver] = (self.print_driver_info(report.get(driver)))
+            output[driver].update({'pos': i})
         return output
 
-    def print_report(self, folder=None, driver_name='', reverse=False):
+    def prepare_data(self, folder=None, driver_name='', driver_id=''):
+
+        if not folder:
+            folder = '.'
+        self.build_report(folder)
+
+        # If driver_id not found, try to find driver_name with same value
+        if driver_id:
+            driver_name = self.report.get(driver_id)
+            if driver_name:
+                driver_name = driver_name['fullname']
+            else:
+                driver_name = driver_id
+
+        drivers_to_print = list(
+            filter(
+                lambda x: self.find_by_name_filter(
+                    drivername=driver_name,
+                    shortname=x),
+                self.report))
+        return drivers_to_print
+
+    def print_report(self, folder=None, driver_name='', driver_id='', reverse=False):
         '''
         The entry point for working with the class. Depending on the parameters, it works with the racer report.
         :param folder: string path to folder with reports
         :param driver_name: Driver name for printing report by this racer
+        :param driver_id: Driver short name for printing report by this racer
         :param reverse: ASC or DESC sorting report
         :return: None
         '''
-        if not folder:
-            folder = '.'
-        self.build_report(folder)
-        drivers_to_print = list(
-            filter(
-                lambda x: self.find_ny_name_filter(
-                    drivername=driver_name,
-                    shortname=x),
-                self.report))
+        drivers_to_print = self.prepare_data(folder=folder, driver_name=driver_name, driver_id=driver_id)
+        data = self.make_report(drivers_to_print, reverse=reverse)
+        self.print_r(data, reverse=reverse)
 
-        out=self.list_all(drivers_to_print, reverse=reverse)
-        return out
+    def get_report(self, folder=None, driver_name='', driver_id='', reverse=False):
+        drivers_to_print = self.prepare_data(folder=folder, driver_name=driver_name, driver_id=driver_id)
+        return self.make_report(drivers_to_print, reverse=reverse)

@@ -34,7 +34,7 @@ def create_app(test_config=None):
         else:
             order = False
 
-        data = ReportMonaco().print_report(folder='static/reports', reverse=order)
+        data = ReportMonaco().get_report(folder='static/reports', reverse=order)
         return render_template('report.html', data=data)
 
     @app.route('/report/drivers/', methods=['GET'])
@@ -48,16 +48,16 @@ def create_app(test_config=None):
 
         if driver_id:
             # Finds full name of driver
-            rmobj = ReportMonaco().build_report('static/reports')
-            driver_name = rmobj.report.get(driver_id)['fullname']
+            # rmobj = ReportMonaco().build_report('static/reports')
+            # driver_name = rmobj.report.get(driver_id)['fullname']
 
-            data = rmobj.print_report(
+            data = ReportMonaco().get_report(
                 folder='static/reports',
-                driver_name=driver_name,
+                driver_id=driver_id,
                 reverse=order)
             return render_template('report.html', data=data)
 
-        data = ReportMonaco().print_report(folder='static/reports', reverse=order)
+        data = ReportMonaco().get_report(folder='static/reports', reverse=order)
         return render_template('list.html', data=data)
 
     @app.template_filter()
