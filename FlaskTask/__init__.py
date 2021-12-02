@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from ReportOfMonaco import ReportMonaco
 
 
@@ -7,7 +7,7 @@ def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
@@ -24,18 +24,21 @@ def create_app(test_config=None):
     except OSError:
         pass
 
+    data = ReportMonaco().build_report(folder='static/reports')
+
     # routes
     @app.route('/', methods=['GET'])
+    def index():
+        return redirect(url_for('report'))
+
+
     @app.route('/report/', methods=['GET'])
     def report():
-        order = request.args.get('order')
-        if order and order.upper() == 'DESC':
-            order = True
-        else:
-            order = False
+        order = request.args.get('order', 'asc')
+        reverse = order.upper() == 'DESC'
 
-        data = ReportMonaco().get_report(folder='static/reports', reverse=order)
-        return render_template('report.html', data=data)
+        reports = data.report(reverse=reverse)
+        return render_template('report.html', data=reports)
 
     @app.route('/report/drivers/', methods=['GET'])
     def list():
@@ -47,18 +50,13 @@ def create_app(test_config=None):
             order = False
 
         if driver_id:
-            # Finds full name of driver
-            # rmobj = ReportMonaco().build_report('static/reports')
-            # driver_name = rmobj.report.get(driver_id)['fullname']
-
-            data = ReportMonaco().get_report(
-                folder='static/reports',
+            reports = data.report(
                 driver_id=driver_id,
                 reverse=order)
-            return render_template('report.html', data=data)
+            return render_template('report.html', data=reports)
 
-        data = ReportMonaco().get_report(folder='static/reports', reverse=order)
-        return render_template('list.html', data=data)
+        reports = data.report(reverse=order)
+        return render_template('list.html', data=reports)
 
     @app.template_filter()
     def format_datetime(value):

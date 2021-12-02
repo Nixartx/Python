@@ -10,7 +10,7 @@ def client():
 
 
 cases = [
-    ('/', 200, b'Drivers report'),
+    ('/', 302, b'Redirecting...'),
     ('/report/', 200, b'Drivers report'),
     ('/report/drivers/', 200, b'Drivers list'),
     ('/report/drivers/?driver_id=SVF', 200, b'Drivers report'),
