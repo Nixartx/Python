@@ -164,7 +164,7 @@ class ReportMonaco:
         drivers_to_print = self.prepare_data(folder=folder, driver_name=driver_name, driver_id=driver_id)
         return self.make_report(drivers_to_print, reverse=reverse)
 
-    def report(self, driver_name='', driver_id='', reverse=False):
+    def generate_report(self, driver_name='', driver_id='', reverse=False):
         # If driver_id not found, try to find driver_name with same value
         if driver_id:
             driver_name = self.report.get(driver_id)

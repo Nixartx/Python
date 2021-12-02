@@ -37,7 +37,7 @@ def create_app(test_config=None):
         order = request.args.get('order', 'asc')
         reverse = order.upper() == 'DESC'
 
-        reports = data.report(reverse=reverse)
+        reports = data.generate_report(reverse=reverse)
         return render_template('report.html', data=reports)
 
     @app.route('/report/drivers/', methods=['GET'])
@@ -50,12 +50,12 @@ def create_app(test_config=None):
             order = False
 
         if driver_id:
-            reports = data.report(
+            reports = data.generate_report(
                 driver_id=driver_id,
                 reverse=order)
             return render_template('report.html', data=reports)
 
-        reports = data.report(reverse=order)
+        reports = data.generate_report(reverse=order)
         return render_template('list.html', data=reports)
 
     @app.template_filter()
