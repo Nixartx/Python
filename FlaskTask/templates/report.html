@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block tittle %}
+Drivers report
+{% endblock %}
+
+{% block body %}
+<h1>Drivers report</h1>
+
+<table class="table">
+<thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Car</th>
+        <th scope="col">Time</th>
+    </tr>
+
+</thead>
+    <tbody>
+    {% for driver in data %}
+    <tr>
+        <th scope="row">{{ data[driver]['pos'] }}</th>
+        <td>{{ data[driver]['fullname'] }}</td>
+        <td>{{ data[driver]['car'] }}</td>
+        <td>{{ data[driver]['time'] | format_datetime }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block tittle %}
+Drivers list
+{% endblock %}
+
+{% block body %}
+<h1>Drivers list</h1>
+
+<table class="table">
+<thead>
+    <tr>
+        <th scope="col">Name</th>
+        <th scope="col">Code</th>
+    </tr>
+
+</thead>
+    <tbody>
+    {% for driver in data %}
+    <tr>
+        <td> <a href="{{ url_for('list',driver_id=driver) }}"> {{ data[driver]['fullname'] }}</a></td>
+        <td> <a href="{{ url_for('list',driver_id=driver) }}"> {{ driver }}</a></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
