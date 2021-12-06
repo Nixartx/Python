@@ -77,9 +77,9 @@ def create_app(test_config=None):
 
             reports = data.generate_report(reverse=reverse)
             if format=='json':
-                return reports, 200, {'Accept':'application/json'}
+                return reports, 200, {'Accept':'application/json', 'Content-Type': 'application/json'}
             else:
-                return reports, 200, {'Accept':'application/xml'}
+                return reports, 200, {'Accept':'application/xml', 'Content-Type': 'application/xml'}
 
     api.add_resource(Report, '/api/report/')
     api.add_resource(List, '/api/report/drivers/')

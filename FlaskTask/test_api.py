@@ -22,6 +22,11 @@ cases_xml = [
     ('/api/report/drivers/?order=desc', 200, xml_out3),
 ]
 
+cases_format=[
+    ('/api/report/drivers/?format=json','application/json'),
+    ('/api/report/drivers/?format=xml','application/xml'),
+]
+
 @pytest.mark.parametrize('param,expected_code,expected_json', cases)
 def test_post_json(client,param,expected_code,expected_json):
     result=client.get(param, headers={"Accept":"application/json"})
@@ -35,3 +40,8 @@ def test_post_xml(client,param,expected_code,expected_xml):
     assert result.is_json==False
     assert result.get_data()==expected_xml
     assert result.status_code==expected_code
+
+@pytest.mark.parametrize('param,expected_format', cases_format)
+def test_format(client,param,expected_format):
+    result=client.get(param)
+    assert result.content_type==expected_format
