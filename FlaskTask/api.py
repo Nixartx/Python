@@ -4,11 +4,33 @@ from simplexml import dumps
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api
 from ReportOfMonaco import ReportMonaco
+from flasgger import Swagger
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+
+    # Create an APISpec
+    template = {
+        "swagger": "2.0",
+        "info": {
+            "title": "Flask Restful Swagger",
+            "description": "Flask Restful Swagger",
+            "version": "1.0",
+            "contact": {
+                "name": "Nixart",
+            }
+        },
+    }
+
+    app.config['SWAGGER'] = {
+        'title': 'Report Of Monaco API',
+        'uiversion': 3,
+        "specs_route": "/api/v1/swagger/"
+    }
+    swagger = Swagger(app, template=template)
+
     api = Api(app)
 
     app.config.from_mapping(
@@ -43,8 +65,58 @@ def create_app(test_config=None):
         resp.headers.extend(headers or {})
         return resp
 
+
     class Report(Resource):
         def get(self):
+            """
+                 get endpoint
+                 ---
+                 tags:
+                   - Report of Monaco APIs
+                 produces:
+                    - "application/json"
+                    - "application/xml"
+                 parameters:
+                   - name: driver_id
+                     in: query
+                     type: string
+                     required: false
+                     description: id of driver ("SVF")
+                   - name: order
+                     in: query
+                     type: string
+                     required: false
+                     description: sorting "asc" or "desc"
+                 responses:
+                   200:
+                     description: List of drivers
+                     schema:
+                       type: object
+                       properties:
+                         driver_id:
+                           type: object
+                           description: short name of driver
+                           properties:
+                            car:
+                                type: string
+                                description: car
+                            fullname:
+                                type: string
+                                description: name of driver
+                            pos:
+                                type: integer
+                                description: position by time in table
+                            time:
+                                type: timedelta
+                                description: race time result
+                            time_f:
+                                type: datetime
+                                description: finish time
+                            time_s:
+                                type: datetime
+                                description: start time
+                           description: list of drivers
+                 """
             driver_id = request.args.get('driver_id')
             order = request.args.get('order', 'asc')
             reverse = order.upper() == 'DESC'
@@ -56,7 +128,7 @@ def create_app(test_config=None):
             reports = data.generate_report(reverse=reverse)
             return reports
 
-    api.add_resource(Report, '/api/report/')
+    api.add_resource(Report, '/api/v1/report/')
 
     return app
 

@@ -11,16 +11,16 @@ def client():
 
 
 cases = [
-    ('/api/report/', 200, out1),
-    ('/api/report/?driver_id=SVF', 200, out2),
-    ('/api/report/?order=desc', 200, out3)
+    ('/api/v1/report/', 200, out1),
+    ('/api/v1/report/?driver_id=SVF', 200, out2),
+    ('/api/v1/report/?order=desc', 200, out3)
 ]
 
 cases_xml = [
-    ('/api/report/', 200, xml_out1),
-    ('/api/report/', 200, xml_out1),
-    ('/api/report/?driver_id=SVF', 200, xml_out2),
-    ('/api/report/?order=desc', 200, xml_out3),
+    ('/api/v1/report/', 200, xml_out1),
+    ('/api/v1/report/', 200, xml_out1),
+    ('/api/v1/report/?driver_id=SVF', 200, xml_out2),
+    ('/api/v1/report/?order=desc', 200, xml_out3),
 ]
 
 
