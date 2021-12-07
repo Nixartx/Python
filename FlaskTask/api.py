@@ -65,7 +65,6 @@ def create_app(test_config=None):
         resp.headers.extend(headers or {})
         return resp
 
-
     class Report(Resource):
         def get(self):
             """
