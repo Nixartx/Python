@@ -83,7 +83,7 @@ def create_app(test_config=None):
                      description: id of driver ("SVF")
                    - name: order
                      in: query
-                     type: string
+                     type: enum(asc,desc)
                      required: false
                      description: sorting "asc" or "desc"
                  responses:
