@@ -3,8 +3,9 @@ import os
 from simplexml import dumps
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api
-from ReportOfMonaco import ReportMonaco
+# from ReportOfMonaco import ReportMonaco
 from flasgger import Swagger
+from FlaskTask.db.models import *
 
 
 def create_app(test_config=None):
@@ -29,13 +30,14 @@ def create_app(test_config=None):
         'uiversion': 3,
         "specs_route": "/api/v1/swagger/"
     }
+
     swagger = Swagger(app, template=template)
 
     api = Api(app)
 
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
+        # DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
     if test_config is None:
@@ -51,7 +53,20 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    data = ReportMonaco().build_report(folder='static/reports')
+    # data = ReportMonaco().build_report(folder='static/reports')
+
+    def convert_to_dict(data):
+        reports = {}
+        for row in data:
+            reports.update({row.driver_id.short_name: {
+                'car': row.driver_id.car,
+                'fullname': row.driver_id.full_name,
+                'pos': row.driver_id.id,
+                'time': row.time,
+                'time_f': row.finish,
+                'time_s': row.start,
+            }})
+        return reports
 
     @api.representation('application/json')
     def output_json(data, code, headers=None):
@@ -121,12 +136,23 @@ def create_app(test_config=None):
             order = request.args.get('order', 'asc')
             reverse = order.upper() == 'DESC'
             if driver_id:
-                reports = data.generate_report(
-                    driver_id=driver_id,
-                    reverse=reverse)
-                return reports
-            reports = data.generate_report(reverse=reverse)
-            return reports
+                # reports = data.generate_report(
+                #     driver_id=driver_id,
+                #     reverse=reverse)
+                # return reports
+                reports = Race.select(
+                    Race.start,
+                    Race.finish,
+                    Race.time,
+                    Driver.short_name,
+                    Driver.full_name,
+                    Driver.car,
+                    Driver.id
+                ).join(Driver).where(Driver.short_name == driver_id).order_by(Race.time)
+                return convert_to_dict(reports)
+
+            reports = Race.select().join(Driver).order_by(Race.time)
+            return convert_to_dict(reports)
 
     api.add_resource(Report, '/api/v1/report/')
 
