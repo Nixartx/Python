@@ -1,11 +1,15 @@
 import pytest
+from peewee import *
 from FlaskTask.api import create_app
+from ..db.models import *
 
 @pytest.fixture
 def client():
     app = create_app({'TESTING': True})
-    client = app.test_client()
-    return client
+    #app.config['DATABASE']='monaco1.db'
+    db.init('monaco1.db')
+    with app.test_client() as client:
+        yield client
 
 
 @pytest.mark.parametrize('case_number',[0,1,2])

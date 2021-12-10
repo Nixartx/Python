@@ -32,9 +32,11 @@ def create_app(test_config=None):
 
     swagger = Swagger(app, template=template)
 
+    db=SqliteDatabase('monaco1.db')
+
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        DATABASE=db
+        DATABASE=db,
     )
 
 
@@ -53,8 +55,6 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    # data = ReportMonaco().build_report(folder='static/reports')
 
     def convert_to_dict(data):
         reports = {}
