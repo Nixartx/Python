@@ -1,6 +1,6 @@
 from peewee import *
 
-db = SqliteDatabase('monaco.db')
+db = SqliteDatabase('db/monaco.db')
 
 
 class BaseModel(Model):
