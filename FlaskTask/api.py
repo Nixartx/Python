@@ -32,16 +32,14 @@ def create_app(test_config=None):
 
     swagger = Swagger(app, template=template)
 
-    db=SqliteDatabase('monaco1.db')
+    db = SqliteDatabase('monaco1.db')
 
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
         DATABASE=db,
     )
 
-
     api = Api(app)
-
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -58,12 +56,12 @@ def create_app(test_config=None):
 
     def convert_to_dict(data):
         reports = {}
-        for row in data:
+        for i, row in enumerate(data, 1):
             reports.update({row.driver_id.short_name: {
                 'car': row.driver_id.car,
                 'fullname': row.driver_id.full_name,
-                'pos': row.driver_id.id,
-                'time': row.time,
+                'pos': i,
+                'time': row.time.strftime('%#H:%M:%S.%f'),
                 'time_f': row.finish,
                 'time_s': row.start,
             }})
@@ -136,19 +134,24 @@ def create_app(test_config=None):
             driver_id = request.args.get('driver_id')
             order = request.args.get('order', 'asc')
             reverse = order.upper() == 'DESC'
-            if driver_id:
-                reports = Race.select(
-                    Race.start,
-                    Race.finish,
-                    Race.time,
-                    Driver.short_name,
-                    Driver.full_name,
-                    Driver.car,
-                    Driver.id
-                ).join(Driver).where(Driver.short_name == driver_id).order_by(Race.time)
-                return convert_to_dict(reports)
 
-            reports = Race.select().join(Driver).order_by(Race.time)
+            reports = Race.select(
+                Race.start,
+                Race.finish,
+                Race.time,
+                Driver.short_name,
+                Driver.full_name,
+                Driver.car,
+            ).join(Driver)
+            if reverse:
+                reports = reports.order_by(Race.time.desc())
+            else:
+                reports = reports.order_by(Race.time.asc())
+
+            if driver_id:
+                reports = reports.where(Driver.short_name == driver_id)
+                return convert_to_dict(reports)
+            a = 1
             return convert_to_dict(reports)
 
     api.add_resource(Report, '/api/v1/report/')

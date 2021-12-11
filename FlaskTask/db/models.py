@@ -3,6 +3,7 @@ from peewee import *
 
 db = SqliteDatabase('db/monaco.db')
 
+
 class BaseModel(Model):
     id = PrimaryKeyField(unique=True)
 

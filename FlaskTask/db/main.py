@@ -1,11 +1,13 @@
 from models import *
 from ReportOfMonaco import ReportMonaco
+from models import db, Race, Driver
 
-with db:
-    db.create_tables([Driver, Race])
-
+db.init('monaco.db')
 
 if __name__ == '__main__':
+
+    with db:
+        db.create_tables([Driver, Race])
 
     data = ReportMonaco().build_report(folder='../static/reports')
     reports = data.generate_report()
