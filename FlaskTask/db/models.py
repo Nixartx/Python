@@ -1,5 +1,6 @@
 from peewee import *
-
+from playhouse.hybrid import hybrid_property
+import datetime
 
 db = SqliteDatabase('db/monaco.db')
 
@@ -22,10 +23,14 @@ class Driver(BaseModel):
 
 
 class Race(BaseModel):
-    start = DateTimeField()
-    finish = DateTimeField()
-    time = TimeField()
-    driver_id = ForeignKeyField(Driver)
+    start = DateTimeField(null=True)
+    finish = DateTimeField(null=True)
+    # time = TimeField()
+    driver = ForeignKeyField(Driver)
+
+    @hybrid_property
+    def time(self):
+        return self.finish - self.start
 
     class Meta:
         db_table = 'races'

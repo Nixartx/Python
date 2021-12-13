@@ -1,15 +1,19 @@
-from models import *
 from ReportOfMonaco import ReportMonaco
 from models import db, Race, Driver
 
-db.init('monaco.db')
 
-if __name__ == '__main__':
-
+def create_db(db_path=None):
+    if db_path:
+        db.init(db_path)
     with db:
         db.create_tables([Driver, Race])
 
-    data = ReportMonaco().build_report(folder='../static/reports')
+
+def parse_data_to_db(report_folder_path, db_path=None):
+    if db_path:
+        db.init(db_path)
+
+    data = ReportMonaco().build_report(folder=report_folder_path)
     reports = data.generate_report()
     print(reports)
 
@@ -29,9 +33,14 @@ if __name__ == '__main__':
                 {
                     'start': reports[shortname]['time_s'],
                     'finish': reports[shortname]['time_f'],
-                    'time': reports[shortname]['time'],
                     'driver_id': reports[shortname]['pos'],
                 }
             )
         Driver.insert_many(drivers_to_insert).execute()
         Race.insert_many(races_to_insert).execute()
+
+
+if __name__ == '__main__':
+    create_db('monaco.db')
+    parse_data_to_db('../static/reports','monaco.db')
+

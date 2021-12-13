@@ -57,9 +57,9 @@ def create_app(test_config=None):
     def convert_to_dict(data):
         reports = {}
         for i, row in enumerate(data, 1):
-            reports.update({row.driver_id.short_name: {
-                'car': row.driver_id.car,
-                'fullname': row.driver_id.full_name,
+            reports.update({row.driver.short_name: {
+                'car': row.driver.car,
+                'fullname': row.driver.full_name,
                 'pos': i,
                 'time': row.time.strftime('%#H:%M:%S.%f'),
                 'time_f': row.finish,
@@ -151,7 +151,6 @@ def create_app(test_config=None):
             if driver_id:
                 reports = reports.where(Driver.short_name == driver_id)
                 return convert_to_dict(reports)
-            a = 1
             return convert_to_dict(reports)
 
     api.add_resource(Report, '/api/v1/report/')
