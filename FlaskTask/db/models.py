@@ -29,8 +29,9 @@ class Race(BaseModel):
 
     @hybrid_property
     def time(self):
-        return self.finish-self.start
-        #return datetime.datetime(self.finish.)-datetime.datetime(self.start)
+        return self.start - self.finish
+        #return self.start
+        # return datetime.datetime(self.finish.)-datetime.datetime(self.start)
 
     # @time.expression
     # def time(cls):
