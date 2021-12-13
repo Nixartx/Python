@@ -25,12 +25,16 @@ class Driver(BaseModel):
 class Race(BaseModel):
     start = DateTimeField(null=True)
     finish = DateTimeField(null=True)
-    # time = TimeField()
     driver = ForeignKeyField(Driver)
 
     @hybrid_property
     def time(self):
-        return self.finish - self.start
+        return self.finish-self.start
+        #return datetime.datetime(self.finish.)-datetime.datetime(self.start)
+
+    # @time.expression
+    # def time(cls):
+    #     return fn.JULIANDAY(cls.finish)-fn.JULIANDAY(cls.start)
 
     class Meta:
         db_table = 'races'
