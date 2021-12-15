@@ -61,7 +61,7 @@ def create_app(test_config=None):
                 'car': row.driver.car,
                 'fullname': row.driver.full_name,
                 'pos': i,
-                'time': row.time.strftime('%#H:%M:%S.%f'),
+                'time': row.time,
                 'time_f': row.finish,
                 'time_s': row.start,
             }})

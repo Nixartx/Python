@@ -29,13 +29,17 @@ class Race(BaseModel):
 
     @hybrid_property
     def time(self):
-        return self.start - self.finish
-        #return self.start
-        # return datetime.datetime(self.finish.)-datetime.datetime(self.start)
+        return self.finish - self.start
 
-    # @time.expression
-    # def time(cls):
-    #     return fn.JULIANDAY(cls.finish)-fn.JULIANDAY(cls.start)
+    @time.expression
+    def time(cls):
+        return fn.STRFTIME(
+            '%H:%M:%f',
+            fn.JULIANDAY(
+                cls.finish) -
+            fn.JULIANDAY(
+                cls.start),
+            '12 hours')
 
     class Meta:
         db_table = 'races'
