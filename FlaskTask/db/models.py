@@ -1,6 +1,5 @@
 from peewee import *
 from playhouse.hybrid import hybrid_property
-import datetime
 
 db = SqliteDatabase('db/monaco.db')
 

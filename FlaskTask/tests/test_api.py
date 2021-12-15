@@ -1,5 +1,4 @@
 import pytest
-from peewee import *
 from FlaskTask.api import create_app
 from ..db.models import *
 

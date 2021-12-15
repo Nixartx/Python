@@ -10,6 +10,9 @@ from FlaskTask.db.models import *
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    #app.config.from_pyfile('config.py', silent=True)
+    app.config.from_object('config.Config')
+    api = Api(app)
 
     # Create an APISpec
     template = {
@@ -32,21 +35,14 @@ def create_app(test_config=None):
 
     swagger = Swagger(app, template=template)
 
-    db = SqliteDatabase('monaco1.db')
+    db = SqliteDatabase(app.config['DATABASE'])
 
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        DATABASE=db,
-    )
+    # app.config.from_mapping(
+    #     SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
+    #     DATABASE=db,
+    # )
 
-    api = Api(app)
 
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
 
     # ensure the instance folder exists
     try:
