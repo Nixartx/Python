@@ -1,5 +1,5 @@
 from ReportOfMonaco import ReportMonaco
-from models import db, Race, Driver
+from FlaskTask.db.models import db, Race, Driver
 
 
 def create_db(db_path=None):
@@ -33,7 +33,7 @@ def parse_data_to_db(report_folder_path, db_path=None):
                 {
                     'start': reports[shortname]['time_s'],
                     'finish': reports[shortname]['time_f'],
-                    'driver_id': reports[shortname]['pos'],
+                    'driver': reports[shortname]['pos'],
                 }
             )
         Driver.insert_many(drivers_to_insert).execute()

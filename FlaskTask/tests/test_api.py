@@ -1,14 +1,18 @@
 import pytest
 from FlaskTask.api import create_app
 from ..db.models import *
+from ..db.main import create_db, parse_data_to_db
 
 
 @pytest.fixture
 def client():
     app = create_app({'TESTING': True})
-    db.init('monaco1.db')
+    create_db('monaco1.db')
+    #db.init('monaco1.db')
+    parse_data_to_db('../static/reports')
     with app.test_client() as client:
         yield client
+    db.drop_tables([Driver,Race])
 
 
 @pytest.mark.parametrize('case_number', [0, 1, 2])
