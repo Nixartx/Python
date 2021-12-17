@@ -41,8 +41,6 @@ def create_app(test_config=None):
     #     DATABASE=db,
     # )
 
-
-
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
@@ -52,14 +50,14 @@ def create_app(test_config=None):
     def convert_to_dict(data):
         reports = {}
         for i, row in enumerate(data, 1):
-            reports.update({row.driver.short_name: {
+            reports[row.driver.short_name] = {
                 'car': row.driver.car,
                 'fullname': row.driver.full_name,
                 'pos': i,
                 'time': row.time,
                 'time_f': row.finish,
                 'time_s': row.start,
-            }})
+            }
         return reports
 
     @api.representation('application/json')

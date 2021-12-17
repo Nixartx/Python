@@ -9,4 +9,4 @@ class Config:
     DEBUG = True
     FLASK_ENV = 'development'
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev'),
-    DATABASE = os.path.join(basedir, 'db\monaco.db'),
+    DATABASE = os.path.join(basedir, 'db\\monaco.db'),

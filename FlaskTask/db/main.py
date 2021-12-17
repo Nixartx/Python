@@ -15,7 +15,6 @@ def parse_data_to_db(report_folder_path, db_path=None):
 
     data = ReportMonaco().build_report(folder=report_folder_path)
     reports = data.generate_report()
-    print(reports)
 
     with db:
         drivers_to_insert = []
@@ -39,8 +38,7 @@ def parse_data_to_db(report_folder_path, db_path=None):
         Driver.insert_many(drivers_to_insert).execute()
         Race.insert_many(races_to_insert).execute()
 
-
-if __name__ == '__main__':
-    create_db('monaco.db')
-    parse_data_to_db('../static/reports','monaco.db')
-
+#
+# if __name__ == '__main__':
+#     create_db('monaco.db')
+#     parse_data_to_db('../static/reports','monaco.db')

@@ -1,7 +1,8 @@
 from peewee import *
 from playhouse.hybrid import hybrid_property
+import os
 
-db = SqliteDatabase('db/monaco.db')
+db = SqliteDatabase(os.path.join(os.path.dirname(__file__), 'monaco.db'))
 
 
 class BaseModel(Model):
