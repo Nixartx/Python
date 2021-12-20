@@ -5,6 +5,7 @@ from flask import Flask, request, make_response
 from flask_restful import Resource, Api
 from flasgger import Swagger
 from FlaskTask.db.models import *
+from FlaskTask.db.schema import *
 
 
 def create_app(test_config=None):
@@ -36,10 +37,9 @@ def create_app(test_config=None):
 
     db = SqliteDatabase(app.config['DATABASE'])
 
-    # app.config.from_mapping(
-    #     SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-    #     DATABASE=db,
-    # )
+    # Marshmallow schema
+    driver_schema = DriverSchema()
+    races_schema = RaceSchema(many=True)
 
     # ensure the instance folder exists
     try:
@@ -50,13 +50,13 @@ def create_app(test_config=None):
     def convert_to_dict(data):
         reports = {}
         for i, row in enumerate(data, 1):
-            reports[row.driver.short_name] = {
-                'car': row.driver.car,
-                'fullname': row.driver.full_name,
+            reports[row['driver']['short_name']] = {
+                'car': row['driver']['car'],
+                'fullname': row['driver']['full_name'],
                 'pos': i,
-                'time': row.time,
-                'time_f': row.finish,
-                'time_s': row.start,
+                'time': row['time'],
+                'time_f': row['finish'],
+                'time_s': row['start'],
             }
         return reports
 
@@ -143,8 +143,8 @@ def create_app(test_config=None):
 
             if driver_id:
                 reports = reports.where(Driver.short_name == driver_id)
-                return convert_to_dict(reports)
-            return convert_to_dict(reports)
+                return convert_to_dict(races_schema.dump(reports))
+            return convert_to_dict(races_schema.dump(reports))
 
     api.add_resource(Report, '/api/v1/report/')
 
