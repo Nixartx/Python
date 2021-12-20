@@ -17,14 +17,13 @@ class RaceSchema(Schema):
     driver = fields.Nested(DriverSchema)
     time = fields.String()
 
-    # @post_dump()
-    # def wrap(self, data, **kwargs):
-    #     key = data['driver']['short_name']
-    #     return {key: {
-    #         'car': data['driver']['car'],
-    #         'fullname': data['driver']['full_name'],
-    #         'pos': 0,
-    #         'time': data['time'],
-    #         'time_f': data['finish'],
-    #         'time_s': data['start'],
-    #     }}
+    @post_dump()
+    def wrap(self, data, **kwargs):
+        key = data['driver']['short_name']
+        return {key: {
+            'car': data['driver']['car'],
+            'fullname': data['driver']['full_name'],
+            'time': data['time'],
+            'time_f': data['finish'],
+            'time_s': data['start'],
+        }}

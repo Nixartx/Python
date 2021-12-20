@@ -47,19 +47,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    def convert_to_dict(data):
-        reports = {}
-        for i, row in enumerate(data, 1):
-            reports[row['driver']['short_name']] = {
-                'car': row['driver']['car'],
-                'fullname': row['driver']['full_name'],
-                'pos': i,
-                'time': row['time'],
-                'time_f': row['finish'],
-                'time_s': row['start'],
-            }
-        return reports
-
     @api.representation('application/json')
     def output_json(data, code, headers=None):
         resp = make_response(json.dumps({'response': data}, default=str), code)
@@ -143,8 +130,8 @@ def create_app(test_config=None):
 
             if driver_id:
                 reports = reports.where(Driver.short_name == driver_id)
-                return convert_to_dict(races_schema.dump(reports))
-            return convert_to_dict(races_schema.dump(reports))
+                return races_schema.dump(reports)
+            return races_schema.dump(reports)
 
     api.add_resource(Report, '/api/v1/report/')
 
