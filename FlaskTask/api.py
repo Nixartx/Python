@@ -3,13 +3,16 @@ import os
 from simplexml import dumps
 from flask import Flask, request, make_response
 from flask_restful import Resource, Api
-from ReportOfMonaco import ReportMonaco
 from flasgger import Swagger
+from FlaskTask.db.models import *
+from FlaskTask.db.schema import *
 
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
+    app.config.from_object('FlaskTask.config.Config')
+    api = Api(app)
 
     # Create an APISpec
     template = {
@@ -29,29 +32,20 @@ def create_app(test_config=None):
         'uiversion': 3,
         "specs_route": "/api/v1/swagger/"
     }
+
     swagger = Swagger(app, template=template)
 
-    api = Api(app)
+    db = SqliteDatabase(app.config['DATABASE'])
 
-    app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY', 'dev'),
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
-    )
-
-    if test_config is None:
-        # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
-    else:
-        # load the test config if passed in
-        app.config.from_mapping(test_config)
+    # Marshmallow schema
+    driver_schema = DriverSchema()
+    races_schema = RaceSchema(many=True)
 
     # ensure the instance folder exists
     try:
         os.makedirs(app.instance_path)
     except OSError:
         pass
-
-    data = ReportMonaco().build_report(folder='static/reports')
 
     @api.representation('application/json')
     def output_json(data, code, headers=None):
@@ -120,13 +114,24 @@ def create_app(test_config=None):
             driver_id = request.args.get('driver_id')
             order = request.args.get('order', 'asc')
             reverse = order.upper() == 'DESC'
+
+            reports = Race.select(
+                Race.start,
+                Race.finish,
+                Race.time,
+                Driver.short_name,
+                Driver.full_name,
+                Driver.car,
+            ).join(Driver)
+            if reverse:
+                reports = reports.order_by(Race.time.desc())
+            else:
+                reports = reports.order_by(Race.time.asc())
+
             if driver_id:
-                reports = data.generate_report(
-                    driver_id=driver_id,
-                    reverse=reverse)
-                return reports
-            reports = data.generate_report(reverse=reverse)
-            return reports
+                reports = reports.where(Driver.short_name == driver_id)
+                return races_schema.dump(reports)
+            return races_schema.dump(reports)
 
     api.add_resource(Report, '/api/v1/report/')
 
