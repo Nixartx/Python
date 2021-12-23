@@ -30,13 +30,11 @@ schedule = db.Table(
     db.Column(
         'course_id',
         db.Integer,
-        db.ForeignKey('courses.id'),
-        primary_key=True),
+        db.ForeignKey('courses.id')),
     db.Column(
         'group_id',
         db.Integer,
-        db.ForeignKey('groups.id'),
-        primary_key=True))
+        db.ForeignKey('groups.id')))
 
 
 class Course(db.Model):
