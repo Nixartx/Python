@@ -24,10 +24,20 @@ class Student(db.Model):
         db.ForeignKey('groups.id'),
         nullable=False)
 
-schedule = db.Table('schedule',
-                db.Column('course_id', db.Integer, db.ForeignKey('courses.id'), primary_key=True),
-                db.Column('group_id', db.Integer, db.ForeignKey('groups.id'), primary_key=True)
-                )
+
+schedule = db.Table(
+    'schedule',
+    db.Column(
+        'course_id',
+        db.Integer,
+        db.ForeignKey('courses.id'),
+        primary_key=True),
+    db.Column(
+        'group_id',
+        db.Integer,
+        db.ForeignKey('groups.id'),
+        primary_key=True))
+
 
 class Course(db.Model):
     __tablename__ = "courses"
@@ -35,12 +45,6 @@ class Course(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
     description = db.Column(db.Text)
-    groups=db.relationship(
+    groups = db.relationship(
         'Group', secondary=schedule, backref=db.backref(
             'groups'))
-
-
-
-
-
-
