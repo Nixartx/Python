@@ -11,5 +11,5 @@ class Config:
     DEBUG = True
     FLASK_ENV = 'development'
     SECRET_KEY = os.environ.get('SECRET_KEY', 'dev'),
-    SQLALCHEMY_DATABASE_URI = 'postgresql://postgres:admin@localhost/PostgreDB'
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL", 'postgresql://postgres:admin@localhost/PostgreDB')
     SQLALCHEMY_TRACK_MODIFICATIONS = False

@@ -1,5 +1,4 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.sql.functions import func
 
 db = SQLAlchemy()
 
@@ -9,7 +8,6 @@ class Group(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80), unique=True, nullable=False)
-    #students = db.relationship('Student', backref=db.backref('students'))
 
 
 schedule = db.Table(
@@ -34,6 +32,7 @@ class Student(db.Model):
         db.Integer,
         db.ForeignKey('groups.id'),
         nullable=True)
+    __table_args__ = (db.UniqueConstraint('first_name', 'last_name', name='_student_name'),)
 
 
 class Course(db.Model):
