@@ -50,7 +50,7 @@ def test_find_course(client):
 
 
 def test_add_student(client):
-    result = client.post('/student/Adam Jensen')
+    result = client.post('/student', data={'first_n':'Adam','last_n':'Jensen'})
     assert result.status_code == 201
     st = result.get_json()
     assert st['first_name'] == 'Adam'

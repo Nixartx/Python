@@ -53,9 +53,12 @@ def create_app(test_config=None):
             return schedule_schema.dump(q)
 
     class StudentRes(Resource):
-        def post(self, student):
-            first_n, last_n = student.split(' ')
-            st = Student(first_name=first_n, last_name=last_n)
+        def post(self):
+            parser = reqparse.RequestParser()
+            parser.add_argument('first_n', type=str)
+            parser.add_argument('last_n', type=str)
+            args = parser.parse_args()
+            st = Student(first_name=args['first_n'], last_name=args['last_n'])
             db.session.add(st)
             db.session.commit()
             return student_schema.dump(st), 201
@@ -101,7 +104,7 @@ def create_app(test_config=None):
 
     api.add_resource(GroupsRes, '/groups')
     api.add_resource(CourseRes, '/course')
-    api.add_resource(StudentRes, '/student/<string:student>')
+    api.add_resource(StudentRes, '/student', '/student/<int:student>')
     api.add_resource(
         StudentCourses,
         '/student/<int:student_id>/courses')
