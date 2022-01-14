@@ -32,7 +32,6 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-
     class GroupsRes(Resource):
         def get(self):
             students = request.args.get('students_number', 0)
