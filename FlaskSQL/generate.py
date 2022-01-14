@@ -5,7 +5,7 @@ from random import choice as rnd, randrange
 def group_name(count):
     chars = string.ascii_uppercase
     num = string.digits
-    name = [rnd(chars) + rnd(chars) + '-' + rnd(num) + rnd(num)
+    name = ['{}{}-{}{}'.format(rnd(chars),rnd(chars),rnd(num),rnd(num))
             for i in range(count)]
     return name
 
@@ -56,7 +56,7 @@ def student_name(count):
     ]
     name_list = []
     while len(name_list) < count:
-        name = rnd(first_names) + ' ' + rnd(last_names)
+        name = '{} {}'.format(rnd(first_names),rnd(last_names))
         if name not in name_list:
             name_list.append(name)
     return name_list

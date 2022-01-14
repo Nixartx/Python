@@ -1,11 +1,10 @@
-from flask import Flask, make_response, request, abort
+from flask import Flask, make_response, abort, request
 import os
 import json
 from FlaskSQL.models import *
 from FlaskSQL.schema import *
-from flask_restful import Resource, Api
-from FlaskSQL.generate import *
-from sqlalchemy import func
+from flask_restful import Resource, Api, reqparse
+from sqlalchemy import func, exc
 
 
 def create_app(test_config=None):
@@ -33,20 +32,17 @@ def create_app(test_config=None):
     except OSError:
         pass
 
-    @api.representation('application/json')
-    def output_json(data, code, headers=None):
-        resp = make_response(json.dumps(data, default=str), code)
-        resp.headers.extend(headers or {})
-        return resp
 
-    class FindGroups(Resource):
-        def get(self, students):
+    class GroupsRes(Resource):
+        def get(self):
+            students = request.args.get('students_number', 0)
             q = db.session.query(Group).join(Student).group_by(
                 Group.id).having(func.count(Student.id) <= students)
             return group_schema.dump(q)
 
-    class FindCourses(Resource):
-        def get(self, course):
+    class CourseRes(Resource):
+        def get(self):
+            course = request.args.get('course_name', None)
             q = db.session.query(
                 schedule,
                 Student.first_name,
@@ -56,7 +52,7 @@ def create_app(test_config=None):
                 Course.name == course)
             return schedule_schema.dump(q)
 
-    class WorkWithStudents(Resource):
+    class StudentRes(Resource):
         def post(self, student):
             first_n, last_n = student.split(' ')
             st = Student(first_name=first_n, last_name=last_n)
@@ -68,44 +64,50 @@ def create_app(test_config=None):
             stud_id = student
             try:
                 st = Student.query.filter(Student.id == stud_id).one()
-            except BaseException:
-                abort(403)
+            except exc.NoResultFound:
+                abort(404)
             db.session.delete(st)
             db.session.commit()
-            return {}, 204
+            return None, 204
 
-    class WorkWithCourses(Resource):
-        def post(self, student_id, course_id):
+    class StudentCourses(Resource):
+        def post(self, student_id):
+            parser = reqparse.RequestParser()
+            parser.add_argument('courses_list', action='append')
+            args = parser.parse_args()
             try:
                 st = Student.query.filter(
                     Student.id == student_id).one()
-                c = Course.query.filter(Course.id == course_id).one()
-            except BaseException:
-                abort(403)
-            c.students.append(st)
-            db.session.add(c)
+                for course_name in args['courses_list']:
+                    c = Course.query.filter(Course.name == course_name).one()
+                    c.students.append(st)
+                    db.session.add(c)
+            except exc.NoResultFound:
+                abort(404)
             db.session.commit()
-            return {}, 201
+            return None, 201
 
+    class StudentCourse(Resource):
         def delete(self, student_id, course_id):
             try:
-                st = Student.query.filter(
-                    Student.id == student_id).one()
-                c = Course.query.filter(Course.id == course_id).one()
-                sc = schedule.query.filter(schedule.student_id == student_id, schedule.course_id == course_id)
-            except BaseException:
-                abort(403)
-            c.students.remove(st)
-            db.session.add(c)
+                sc = schedule.delete().filter(
+                    schedule.columns.student_id == student_id,
+                    schedule.columns.course_id == course_id)
+                db.session.execute(sc)
+            except exc.NoResultFound:
+                abort(404)
             db.session.commit()
-            return {}, 204
+            return None, 204
 
-    api.add_resource(FindGroups, '/groups/<int:students>')
-    api.add_resource(FindCourses, '/course/<string:course>')
-    api.add_resource(WorkWithStudents, '/student/<string:student>')
+    api.add_resource(GroupsRes, '/groups')
+    api.add_resource(CourseRes, '/course')
+    api.add_resource(StudentRes, '/student/<string:student>')
     api.add_resource(
-        WorkWithCourses,
-        '/students/<int:student_id>/courses/<int:course_id>')
+        StudentCourses,
+        '/student/<int:student_id>/courses')
+    api.add_resource(
+        StudentCourse,
+        '/student/<int:student_id>/course/<int:course_id>')
     return app
 
 
