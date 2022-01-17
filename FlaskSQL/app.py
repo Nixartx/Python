@@ -1,6 +1,5 @@
-from flask import Flask, make_response, abort, request
+from flask import Flask, abort, request
 import os
-import json
 from FlaskSQL.models import *
 from FlaskSQL.schema import *
 from flask_restful import Resource, Api, reqparse
@@ -67,7 +66,7 @@ def create_app(test_config=None):
             try:
                 st = Student.query.filter(Student.id == stud_id).one()
             except exc.NoResultFound:
-                abort(404)
+                abort(409)
             db.session.delete(st)
             db.session.commit()
             return None, 204
