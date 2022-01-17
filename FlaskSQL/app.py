@@ -63,11 +63,7 @@ def create_app(test_config=None):
 
         def delete(self, student):
             stud_id = student
-            try:
-                st = Student.query.filter(Student.id == stud_id).one()
-            except exc.NoResultFound:
-                abort(409)
-            db.session.delete(st)
+            Student.query.filter_by(id=stud_id).delete()
             db.session.commit()
             return None, 204
 

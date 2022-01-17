@@ -99,7 +99,7 @@ def test_delete_student_suc(client):
 
 def test_delete_student_er(client):
     result = client.delete('/student/999')
-    assert result.status_code == 409
+    assert result.status_code == 204
 
 
 def test_add_course_to_student(client):
