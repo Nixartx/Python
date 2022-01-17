@@ -48,7 +48,7 @@ def test_find_groups(client):
         '''
         SELECT COUNT(students.id)
         FROM "groups"
-        JOIN students ON students.group_id = "groups".id 
+        JOIN students ON students.group_id = "groups".id
         GROUP BY students.group_id
         HAVING count(students.id) <= 15
         ''')
@@ -61,7 +61,7 @@ def test_find_groups(client):
 
 
 def test_find_course(client):
-    sql=sqlalchemy.text(
+    sql = sqlalchemy.text(
         ''' SELECT * FROM schedule
             JOIN students ON students.id = schedule.student_id
             JOIN courses ON courses.id = schedule.course_id
@@ -91,7 +91,7 @@ def test_add_student(client):
 def test_delete_student_suc(client):
     st_id = add_student_to_db('Adam', 'Jensen')
     result = client.delete('/student/{}'.format(st_id))
-    check_st=session.query(Student).filter_by(id=st_id).first()
+    check_st = session.query(Student).filter_by(id=st_id).first()
     session.close()
     assert check_st is None
     assert result.status_code == 204
