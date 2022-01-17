@@ -80,8 +80,8 @@ def create_app(test_config=None):
             try:
                 st = Student.query.filter(
                     Student.id == student_id).one()
-                for course_name in args['courses_list']:
-                    c = Course.query.filter(Course.name == course_name).one()
+                for course_id in args['courses_list']:
+                    c = Course.query.filter(Course.id == course_id).one()
                     c.students.append(st)
                     db.session.add(c)
             except exc.NoResultFound:
@@ -91,13 +91,10 @@ def create_app(test_config=None):
 
     class StudentCourse(Resource):
         def delete(self, student_id, course_id):
-            try:
-                sc = schedule.delete().filter(
-                    schedule.columns.student_id == student_id,
-                    schedule.columns.course_id == course_id)
-                db.session.execute(sc)
-            except exc.NoResultFound:
-                abort(404)
+            sc = schedule.delete().filter(
+                schedule.columns.student_id == student_id,
+                schedule.columns.course_id == course_id)
+            db.session.execute(sc)
             db.session.commit()
             return None, 204
 

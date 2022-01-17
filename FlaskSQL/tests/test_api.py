@@ -2,19 +2,21 @@ import pytest
 from FlaskSQL.initdb import create_data, drop
 from sqlalchemy import MetaData, Table, create_engine
 from FlaskSQL.app import create_app
+from FlaskSQL.models import *
 
 testdb_path = 'postgresql://postgres:admin@localhost/schedule_test'
-
+engine = create_engine(testdb_path)
+con = engine.connect()
 
 def add_student_to_db(f_name, l_name):
-    engine = create_engine(testdb_path)
-    metadata = MetaData()
-    students = Table('students', metadata, autoload=True, autoload_with=engine)
-    st_ins = students.insert().values(
+
+    #metadata = MetaData()
+    #students = Table('students', metadata, autoload=True, autoload_with=engine)
+    st_ins = Student.insert().values(
         first_name=f_name,
         last_name=l_name).returning(
-        students.columns.id)
-    con = engine.connect()
+        Student.columns.id)
+
     st_id = None
     for row in con.execute(st_ins):
         st_id = row['id']
@@ -22,17 +24,17 @@ def add_student_to_db(f_name, l_name):
 
 
 def find_schedule_first():
-    engine = create_engine(testdb_path)
-    metadata = MetaData()
-    schedules = Table(
-        'schedule',
-        metadata,
-        autoload=True,
-        autoload_with=engine)
-    schedule = schedules.select()
+    # engine = create_engine(testdb_path)
+    # metadata = MetaData()
+    # schedules = Table(
+    #     'schedule',
+    #     metadata,
+    #     autoload=True,
+    #     autoload_with=engine)
+    sc = schedule.select()
     con = engine.connect()
     result = None
-    for row in con.execute(schedule):
+    for row in con.execute(sc):
         result = {
             'student_id': row['student_id'],
             'course_id': row['course_id']}
@@ -85,7 +87,7 @@ def test_delete_student_er(client):
 
 def test_add_course_to_student(client):
     st = add_student_to_db('Adam', 'Jensen')
-    courses_list = ['Math', 'Biology', 'Chemistry']
+    courses_list = [1, 2, 3]
     result = client.post(
         '/student/{}/courses'.format(st), data={'courses_list': courses_list})
     assert result.status_code == 201
