@@ -83,10 +83,3 @@ if __name__ == "__main__":
     while True:
         user_input = input("> ")
         print(chat.ask(user_input))
-
-#  what you think about Python?
-#  write hello world on it
-#  how much questions I am ask you?
-
-#  Ask this after restart chat
-#  What programming language did we talk about last time?
